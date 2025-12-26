@@ -13,11 +13,30 @@ export default function RegisterPage() {
     const handleRegister = async () => {
         setLoading(true);
 
+        // basic client-side validation
+        const emailTrim = email.trim();
+        const passwordTrim = password;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailTrim || !emailRegex.test(emailTrim)) {
+            alert("Please enter a valid email address.");
+            setLoading(false);
+            return;
+        }
+        if (!passwordTrim || passwordTrim.length < 6) {
+            alert("Please enter a password with at least 6 characters.");
+            setLoading(false);
+            return;
+        }
+
+        console.log('register payload', { email: emailTrim });
+
         // 1. Create auth user
         const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
+            email: emailTrim,
+            password: passwordTrim,
         });
+
+        console.log('supabase.signUp response', { data, error });
 
         if (error) {
             alert(error.message);
